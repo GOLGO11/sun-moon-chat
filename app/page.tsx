@@ -404,7 +404,7 @@ export default function Home() {
               <label className="block text-sm text-slate-100">
                 Nomor WhatsApp
                 <input
-                  className="mt-2 w-full rounded-2xl border border-white/12 bg-white/6 px-4 py-3 text-base outline-none transition focus:border-cyan-300/70"
+                  className="mt-2 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-base text-slate-50 outline-none transition focus:border-cyan-300/70"
                   name="phone"
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
@@ -429,7 +429,7 @@ export default function Home() {
               <label className="block text-sm text-slate-100">
                 Kode OTP
                 <input
-                  className="mt-2 w-full rounded-2xl border border-white/12 bg-white/6 px-4 py-3 text-center text-2xl tracking-[0.5em] outline-none transition focus:border-cyan-300/70"
+                  className="mt-2 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-center text-2xl tracking-[0.5em] text-slate-50 outline-none transition focus:border-cyan-300/70"
                   inputMode="numeric"
                   maxLength={6}
                   name="otp"
@@ -490,7 +490,7 @@ export default function Home() {
               <label className="block text-sm text-slate-100">
                 Tanggal lahir
                 <input
-                  className="mt-2 w-full rounded-2xl border border-white/12 bg-white/6 px-4 py-3 outline-none transition focus:border-cyan-300/70"
+                  className="mt-2 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/70"
                   type="date"
                   value={manualInput.birthDate}
                   onChange={(event) =>
@@ -504,7 +504,7 @@ export default function Home() {
               <label className="block text-sm text-slate-100">
                 Jam lahir
                 <input
-                  className="mt-2 w-full rounded-2xl border border-white/12 bg-white/6 px-4 py-3 outline-none transition focus:border-cyan-300/70"
+                  className="mt-2 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/70"
                   type="time"
                   value={manualInput.birthTime}
                   onChange={(event) =>
@@ -518,7 +518,7 @@ export default function Home() {
               <label className="block text-sm text-slate-100">
                 Kota lahir
                 <select
-                  className="mt-2 w-full rounded-2xl border border-white/12 bg-[#0f2233] px-4 py-3 outline-none transition focus:border-cyan-300/70"
+                  className="mt-2 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-slate-50 outline-none transition focus:border-cyan-300/70"
                   value={manualInput.city}
                   onChange={(event) =>
                     setManualInput((current) => ({
@@ -584,7 +584,7 @@ export default function Home() {
               <div className="mt-5 rounded-[28px] border border-white/10 bg-black/20 p-4">
                 <p className="text-sm font-semibold text-white">Tanya Rasi Bintang</p>
                 <textarea
-                  className="mt-3 min-h-28 w-full rounded-2xl border border-white/12 bg-white/6 px-4 py-3 text-sm outline-none transition focus:border-cyan-300/70"
+                  className="mt-3 min-h-28 w-full rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-sm text-slate-50 outline-none transition focus:border-cyan-300/70"
                   value={aiPrompt}
                   onChange={(event) => setAiPrompt(event.target.value)}
                 />
@@ -684,7 +684,7 @@ export default function Home() {
                 ) : (
                   <div className="mt-4 flex gap-2">
                     <input
-                      className="flex-1 rounded-2xl border border-white/12 bg-white/6 px-4 py-3 text-sm outline-none transition focus:border-cyan-300/70"
+                      className="flex-1 rounded-2xl border border-cyan-200/20 bg-[#0d2233] px-4 py-3 text-sm text-slate-50 outline-none transition focus:border-cyan-300/70"
                       placeholder="Kirim pesan pertama..."
                       value={messageDraft}
                       onChange={(event) => setMessageDraft(event.target.value)}

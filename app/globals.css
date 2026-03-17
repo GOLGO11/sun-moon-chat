@@ -51,6 +51,20 @@ textarea {
   font: inherit;
 }
 
+input,
+select,
+textarea {
+  color: var(--foreground);
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  background-color: #0d2233;
+}
+
+option {
+  color: var(--foreground);
+  background: #0d2233;
+}
+
 .demo-badge {
   backdrop-filter: blur(10px);
 }
