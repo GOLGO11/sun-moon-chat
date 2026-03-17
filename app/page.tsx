@@ -9,6 +9,14 @@ import {
   storeDemoSession,
   trackDemoEvent,
 } from "@/src/lib/demo-storage";
+import {
+  getChart,
+  getChatThread,
+  getMatches,
+  getReading,
+  reportChatThread,
+  sendChatMessage,
+} from "@/src/lib/demo-services";
 import type { BirthInput, ChartResult, MatchResult, ReadingResult } from "@/src/types/demo";
 
 type DemoStep = "login" | "otp" | "choice" | "manual" | "dashboard";
@@ -34,17 +42,6 @@ const initialBirthInput: BirthInput = {
   birthTime: "23:58",
   city: "Jakarta",
 };
-
-async function requestJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  const response = await fetch(input, init);
-  const json = (await response.json()) as T & { errorCode?: string };
-
-  if (!response.ok) {
-    throw new Error(json.errorCode ?? "REQUEST_FAILED");
-  }
-
-  return json;
-}
 
 function statusLabel(error: string) {
   if (error === "CITY_UNSUPPORTED") {
@@ -180,46 +177,26 @@ export default function Home() {
         birthInput,
       });
 
-      const chart = await requestJson<ChartResult>("/api/chart", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(birthInput),
-      });
+      const chart = await getChart(birthInput);
 
       trackDemoEvent("birth_submitted", { mode });
       trackDemoEvent("chart_rendered", { timezone: chart.timezone });
 
-      const reading = await requestJson<ReadingResult>("/api/reading", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: defaultReadingPrompt,
-          chart,
-        }),
+      const reading = await getReading({
+        prompt: defaultReadingPrompt,
+        chart,
       });
 
-      const params = new URLSearchParams(
+      const matches = await getMatches(
         mode === "sample"
           ? { userId: viewerId }
           : {
-              birthDate: birthInput.birthDate,
-              birthTime: birthInput.birthTime,
-              city: birthInput.city,
+              birthInput,
             },
       );
-
-      const matches = await requestJson<MatchResult[]>(`/api/matches?${params.toString()}`);
       const selectedMatch = matches[0] ?? null;
       const thread = selectedMatch
-        ? await requestJson<{
-            key: string;
-            messages: DemoState["threadMessages"];
-            reported: boolean;
-          }>(`/api/chat/thread?viewerId=${viewerId}&matchId=${selectedMatch.id}`)
+        ? await getChatThread(viewerId, selectedMatch.id)
         : { messages: [], reported: false };
 
       if (selectedMatch) {
@@ -288,15 +265,9 @@ export default function Home() {
 
     try {
       setErrorMessage("");
-      const reading = await requestJson<ReadingResult>("/api/reading", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: aiPrompt,
-          chart: demoState.chart,
-        }),
+      const reading = await getReading({
+        prompt: aiPrompt,
+        chart: demoState.chart,
       });
 
       trackDemoEvent("ai_prompt_sent", { blocked: reading.blocked });
@@ -312,11 +283,7 @@ export default function Home() {
   async function openMatch(match: MatchResult) {
     try {
       setErrorMessage("");
-      const thread = await requestJson<{
-        key: string;
-        messages: DemoState["threadMessages"];
-        reported: boolean;
-      }>(`/api/chat/thread?viewerId=${demoState.viewerId}&matchId=${match.id}`);
+      const thread = await getChatThread(demoState.viewerId, match.id);
 
       trackDemoEvent("match_opened", { matchId: match.id, source: match.source });
       setDemoState((current) => ({
@@ -337,20 +304,11 @@ export default function Home() {
 
     try {
       setErrorMessage("");
-      const response = await requestJson<{
-        message: DemoState["threadMessages"][number];
-        ok: boolean;
-      }>("/api/chat/send", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          from: demoState.viewerId,
-          to: demoState.selectedMatch.id,
-          text: messageDraft,
-        }),
-      });
+      const response = await sendChatMessage(
+        demoState.viewerId,
+        demoState.selectedMatch.id,
+        messageDraft,
+      );
 
       trackDemoEvent("chat_sent", { matchId: demoState.selectedMatch.id });
       setDemoState((current) => ({
@@ -369,16 +327,7 @@ export default function Home() {
     }
 
     try {
-      await requestJson<{ ok: true }>("/api/chat/report", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          viewerId: demoState.viewerId,
-          matchId: demoState.selectedMatch.id,
-        }),
-      });
+      await reportChatThread(demoState.viewerId, demoState.selectedMatch.id);
 
       trackDemoEvent("chat_reported", { matchId: demoState.selectedMatch.id });
       setDemoState((current) => ({

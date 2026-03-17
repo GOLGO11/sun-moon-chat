@@ -1,75 +1,15 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import Home from "@/app/page";
-
-const fetchMock = vi.fn();
+import { resetChatStore } from "@/src/lib/chat-store";
 
 describe("Home demo flow", () => {
   beforeEach(() => {
-    fetchMock.mockReset();
-    vi.stubGlobal("fetch", fetchMock);
     window.localStorage.clear();
+    resetChatStore();
   });
 
   it("walks the reviewer through sample onboarding to first chat send", async () => {
-    fetchMock
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          sun: "Leo",
-          moon: "Pisces",
-          ascendant: "Cancer",
-          timezone: "Asia/Jakarta",
-          explanationSeed: "Interpretive chart seed.",
-          element: "fire",
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          blocked: false,
-          answer: "Reading aman.",
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => [
-          {
-            id: "u_demo_2",
-            name: "Raka",
-            age: 27,
-            city: "Makassar",
-            sun: "Aries",
-            compatibilityScore: 88,
-            compatibilityReason: "Cocok untuk pembuka yang jujur.",
-            opener: "Mulai dari cerita kecil dulu.",
-            bio: "Bio seeded.",
-            source: "seeded-demo",
-          },
-        ],
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          key: "u_demo_1__u_demo_2",
-          messages: [],
-          reported: false,
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          ok: true,
-          message: {
-            id: "m_1",
-            from: "u_demo_1",
-            to: "u_demo_2",
-            text: "Halo! Aku juga suka obrolan jujur.",
-            sentAt: "2026-03-17T10:00:00.000Z",
-          },
-        }),
-      });
-
     render(<Home />);
 
     fireEvent.change(screen.getByLabelText("Nomor WhatsApp"), {
@@ -85,6 +25,10 @@ describe("Home demo flow", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Peta kosmikmu")).toBeTruthy();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Rekomendasi Hari Ini")).toBeTruthy();
     });
 
     fireEvent.change(screen.getByPlaceholderText("Kirim pesan pertama..."), {

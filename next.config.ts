@@ -1,8 +1,19 @@
 import type { NextConfig } from "next";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 const nextConfig: NextConfig = {
-  // Demo app - no external services required
-  // Mobile-first responsive design
+  output: "export",
+  images: {
+    unoptimized: true,
+  },
+  trailingSlash: true,
+  ...(basePath
+    ? {
+        basePath,
+        assetPrefix: basePath,
+      }
+    : {}),
 };
 
 export default nextConfig;

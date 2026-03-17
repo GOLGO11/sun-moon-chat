@@ -13,6 +13,22 @@ npm run dev
 
 Then open `http://127.0.0.1:3000`.
 
+## Deploy to GitHub Pages
+
+This demo is now static-export friendly. Build with:
+
+```bash
+npm run build
+```
+
+The static site will be generated in `out/`.
+
+If you deploy to a project Pages URL like `https://<user>.github.io/<repo>/`, build with:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/<repo> npm run build
+```
+
 ## Fast reviewer path
 
 1. Enter any `+62` phone number
@@ -31,6 +47,7 @@ Then open `http://127.0.0.1:3000`.
 - No visitor unlock
 - No advanced matching
 - No external SMS, auth SaaS, database, or LLM dependency
+- No runtime API routes required for deployment
 
 ## Demo notes
 
@@ -38,4 +55,5 @@ Then open `http://127.0.0.1:3000`.
 - Chart generation is deterministic for the same input
 - City support is intentionally limited to the seeded Indonesian city list
 - Demo analytics are stored in localStorage only
+- Match and chat demo state runs locally in the browser
 - `Reset demo` clears session and local event history
